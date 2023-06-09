@@ -194,6 +194,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(JPEGXL_STATIC)
   set(BUILD_SHARED_LIBS 0)
+  set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
   # Clang developers say that in case to use "static" we have to build stdlib
   # ourselves; for real use case we don't care about stdlib, as it is "granted",
   # so just linking all other libraries is fine.
