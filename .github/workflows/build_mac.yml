@@ -1,0 +1,46 @@
+name: Build (Mac)
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: macos-11
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Remove Mono
+        run: sudo rm -rf /Library/Frameworks/Mono.framework &&
+          sudo pkgutil --forget com.xamarin.mono-MDK.pkg &&
+          sudo rm /etc/paths.d/mono-commands
+      - name: Install dependencies
+        run: brew install llvm coreutils cmake giflib jpeg-turbo libpng ninja zlib doxygen
+      - name: Install more dependencies
+        run: ./deps.sh
+      - name: Build
+        run: export PATH=/usr/local/opt/llvm/bin:$PATH &&
+          export CMAKE_PREFIX_PATH=`brew --prefix giflib`:`brew --prefix jpeg-turbo`:`brew --prefix libpng`:`brew --prefix zlib` &&
+          export CMAKE_CXX_FLAGS=-DSKCMS_PORTABLE &&
+          ./ci.sh release -DJPEGXL_STATIC=ON -DJPEGXL_ENABLE_VIEWERS=OFF -DJPEGXL_ENABLE_PLUGINS=OFF -DJPEGXL_ENABLE_OPENEXR=OFF -DJPEGXL_ENABLE_BENCHMARK=OFF -DBUILD_TESTING=OFF
+      - name: Calculate checksum
+        run: shasum -a 256 build/tools/cjxl &&
+          shasum -a 256 build/tools/djxl
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: binaries-mac
+          path: |
+            build/tools/cjxl
+            build/tools/djxl
+      - name: Zip
+        if: startsWith(github.ref, 'refs/tags/')
+        run: cd build/tools && zip jpeg-xl-macos-x64-static.zip cjxl djxl
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: build/tools/jpeg-xl-macos-x64-static.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
