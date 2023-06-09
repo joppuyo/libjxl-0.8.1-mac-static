@@ -16,7 +16,7 @@ jobs:
           sudo pkgutil --forget com.xamarin.mono-MDK.pkg &&
           sudo rm /etc/paths.d/mono-commands
       - name: Install dependencies
-        run: brew install llvm coreutils cmake giflib jpeg-turbo libpng ninja zlib doxygen
+        run: brew install llvm@15 coreutils cmake giflib jpeg-turbo libpng ninja zlib doxygen
       - name: Install more dependencies
         run: ./deps.sh
       - name: Build
