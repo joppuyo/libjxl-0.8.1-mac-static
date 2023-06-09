@@ -23,7 +23,7 @@ jobs:
         run: export PATH=/usr/local/opt/llvm/bin:$PATH &&
           export CMAKE_PREFIX_PATH=`brew --prefix giflib`:`brew --prefix jpeg-turbo`:`brew --prefix libpng`:`brew --prefix zlib` &&
           export CMAKE_CXX_FLAGS=-DSKCMS_PORTABLE &&
-          ./ci.sh release -DJPEGXL_STATIC=ON -DJPEGXL_ENABLE_VIEWERS=OFF -DJPEGXL_ENABLE_PLUGINS=OFF -DJPEGXL_ENABLE_OPENEXR=OFF -DJPEGXL_ENABLE_BENCHMARK=OFF -DBUILD_TESTING=OFF
+          ./ci.sh release -DJPEGXL_STATIC=ON -DJPEGXL_ENABLE_DOXYGEN=OFF -DJPEGXL_ENABLE_VIEWERS=OFF -DJPEGXL_ENABLE_PLUGINS=OFF -DJPEGXL_ENABLE_OPENEXR=OFF -DJPEGXL_ENABLE_BENCHMARK=OFF -DBUILD_TESTING=OFF
       - name: Calculate checksum
         run: shasum -a 256 build/tools/cjxl &&
           shasum -a 256 build/tools/djxl
